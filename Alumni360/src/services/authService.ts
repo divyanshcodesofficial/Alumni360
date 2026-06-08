@@ -10,7 +10,6 @@ export interface SignupData {
   name: string;
   phone: string;
   role: string;
-  institution?: string;
   batch_year?: number;
   adminSecret?: string;
 }
@@ -27,7 +26,6 @@ export interface OTPData {
   otp: string;
   name: string;
   role: string;
-  institution?: string;
   batch_year?: number;
   adminSecret?: string;
 }
@@ -45,8 +43,7 @@ export interface AuthResponse {
     email: string;
     name: string;
     phone: string;
-    role: string;
-    institution?: string;
+    role: 'student' | 'alumni' | 'admin';
     batch_year?: number;
   };
 }
@@ -66,7 +63,6 @@ export const authService = {
       console.log('📱 Mock Mode: Sending signup OTP for', userData.email);
       await mockDelay();
       
-      // Simulate email already exists error
       if (userData.email === 'admin@test.com') {
         throw new Error('Email already exists');
       }
@@ -108,8 +104,7 @@ export const authService = {
           email: otpData.email,
           name: otpData.name,
           phone: otpData.phone,
-          role: otpData.role,
-          institution: otpData.institution,
+          role: otpData.role as 'student' | 'alumni' | 'admin',
           batch_year: otpData.batch_year
         }
       };
@@ -174,7 +169,6 @@ export const authService = {
           name: 'Test User',
           phone: '+1234567890',
           role: 'student',
-          institution: 'Test University',
           batch_year: 2024
         }
       };
@@ -238,8 +232,7 @@ export const authService = {
           email: otpData.email,
           name: 'Admin User',
           phone: '+919999999990',
-          role: 'admin',
-          institution: 'Alumni360 HQ'
+          role: 'admin'
         }
       };
     }
@@ -255,18 +248,23 @@ export const authService = {
     return data;
   },
 
-  // Fetch admin analytics (with mock support)
+  // Fetch admin analytics
   fetchAdminAnalytics: async (): Promise<Record<string, number | string>> => {
     if (MOCK_MODE) {
       await mockDelay();
       return {
-        collegesRegistered: 42,
-        studentsRegistered: 2847,
-        alumniRegistered: 8543,
-        facultyRegistered: 312,
-        averageEngagement: '78%',
-        totalEvents: 156,
-        activeUsers: 1247
+        totalUsers: 0,
+        totalStudents: 0,
+        totalAlumni: 0,
+        totalAdmins: 0,
+        totalPosts: 0,
+        totalJobs: 0,
+        totalEvents: 0,
+        totalConnections: 0,
+        pendingMentorships: 0,
+        activeMentorships: 0,
+        pendingJobs: 0,
+        recentSignups: 0
       };
     }
 
@@ -280,7 +278,7 @@ export const authService = {
 
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Failed to fetch analytics');
-    return data;
+    return data.data || data;
   },
 
   // Helper function to make authenticated requests

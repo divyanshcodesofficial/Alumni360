@@ -1,26 +1,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   User, 
   GraduationCap, 
-  Users, 
-  Building, 
   Shield,
   Mail,
   Lock,
   ArrowRight,
-  X
 } from "lucide-react";
 
 const roles = [
-  { id: "faculty", label: "Faculty", icon: GraduationCap, description: "Teaching staff & educators" },
-  { id: "student", label: "Student", icon: User, description: "Current students" },
-  { id: "alumni", label: "Alumni", icon: Users, description: "Graduated students" },
-  { id: "institution", label: "College / Institution", icon: Building, description: "Educational institutions" },
-  { id: "admin", label: "Admin", icon: Shield, description: "System administrators" }
+  { id: "student", label: "Student", icon: User, description: "Current students seeking mentorship & opportunities" },
+  { id: "alumni", label: "Alumni", icon: GraduationCap, description: "Graduated students ready to mentor & contribute" },
+  { id: "admin", label: "Admin", icon: Shield, description: "Platform administrators & moderators" }
 ];
 
 interface RoleSelectionModalProps {
@@ -56,7 +51,6 @@ export const RoleSelectionModal = ({ isOpen, onClose }: RoleSelectionModalProps)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Sign in form submitted:', formData, selectedRole);
-    // Handle form submission logic here
     onClose();
   };
 
@@ -142,7 +136,7 @@ export const RoleSelectionModal = ({ isOpen, onClose }: RoleSelectionModalProps)
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="bg-white border-border pl-10"
+                    className="border-border pl-10"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -160,7 +154,7 @@ export const RoleSelectionModal = ({ isOpen, onClose }: RoleSelectionModalProps)
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className="bg-white border-border pl-10"
+                    className="border-border pl-10"
                     placeholder="Enter your password"
                   />
                 </div>

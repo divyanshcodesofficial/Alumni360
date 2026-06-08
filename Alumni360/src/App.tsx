@@ -39,19 +39,7 @@ const App = () => (
                   </ProtectedRoute>
                 } />
                 
-                {/* Role-specific dashboards */}
-                <Route path="/admin-dashboard" element={
-                  <ProtectedRoute requiredRole="admin">
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                
-                <Route path="/faculty-dashboard" element={
-                  <ProtectedRoute requiredRole="faculty">
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                
+                {/* Role-specific dashboards — Student, Alumni, Admin only */}
                 <Route path="/student-dashboard" element={
                   <ProtectedRoute requiredRole="student">
                     <Dashboard />
@@ -64,8 +52,8 @@ const App = () => (
                   </ProtectedRoute>
                 } />
                 
-                <Route path="/institution-dashboard" element={
-                  <ProtectedRoute requiredRole="institution">
+                <Route path="/admin-dashboard" element={
+                  <ProtectedRoute requiredRole="admin">
                     <Dashboard />
                   </ProtectedRoute>
                 } />

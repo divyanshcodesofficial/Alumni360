@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const prisma = require('../db');
+const { VALID_ROLES } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -22,7 +23,12 @@ const matchPassword = async (enteredPassword, storedPassword) => {
 // @access  Public
 router.post('/signup/send-otp', async (req, res) => {
   try {
-    const { email, password, name, phone, role, institution, batch_year, adminSecret } = req.body;
+    const { email, password, name, phone, role, batch_year, adminSecret } = req.body;
+
+    // Validate role
+    if (!VALID_ROLES.includes(role)) {
+      return res.status(400).json({ success: false, error: `Invalid role. Must be one of: ${VALID_ROLES.join(', ')}` });
+    }
 
     // Check if user exists
     let user = await prisma.user.findUnique({ where: { email } });
@@ -49,7 +55,6 @@ router.post('/signup/send-otp', async (req, res) => {
           name, 
           phone, 
           role, 
-          institution, 
           batch_year: batch_year ? parseInt(batch_year) : null,
           otp, 
           otpExpire, 
@@ -64,7 +69,6 @@ router.post('/signup/send-otp', async (req, res) => {
           name,
           phone,
           role,
-          institution,
           batch_year: batch_year ? parseInt(batch_year) : null,
           otp,
           otpExpire
@@ -123,8 +127,9 @@ router.post('/signup/verify', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
-        institution: user.institution
+        batch_year: user.batch_year
       }
     });
   } catch (err) {
@@ -142,6 +147,11 @@ router.post('/login/send-otp', async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.isVerified) {
       return res.status(401).json({ success: false, error: 'Invalid credentials or unverified user' });
+    }
+
+    // Block login for deprecated roles
+    if (!VALID_ROLES.includes(user.role)) {
+      return res.status(403).json({ success: false, error: 'Your account role is no longer supported. Please contact an administrator.' });
     }
 
     const isMatch = await matchPassword(password, user.password);
@@ -201,8 +211,9 @@ router.post('/login/verify', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
-        institution: user.institution
+        batch_year: user.batch_year
       }
     });
   } catch (err) {
@@ -210,7 +221,7 @@ router.post('/login/verify', async (req, res) => {
   }
 });
 
-// Admin login routes follow the same pattern, usually restricted by role check
+// Admin login routes
 router.post('/admin/login/send-otp', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -257,7 +268,11 @@ router.post('/admin/login/verify', async (req, res) => {
     });
 
     const token = generateToken(user.id);
-    res.status(200).json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    res.status(200).json({
+      success: true,
+      token,
+      user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role }
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

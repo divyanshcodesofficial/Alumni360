@@ -14,8 +14,7 @@ model User {
   password    String
   name        String
   phone       String
-  role        String
-  institution String?
+  role        String   // "student", "alumni", "admin"
   batch_year  Int?
   otp         String?
   otpExpire   DateTime?
@@ -41,6 +40,13 @@ model User {
   sentConnections Connection[] @relation("Requester")
   // Connections where user is the recipient
   receivedConnections Connection[] @relation("Recipient")
+
+  // Mentorship relations
+  mentorshipsAsMentor  Mentorship[] @relation("Mentor")
+  mentorshipsAsStudent Mentorship[] @relation("Mentee")
+
+  // Events created by this user
+  createdEvents Event[]
 }
 
 model Post {
@@ -49,7 +55,7 @@ model Post {
   image     String?
   video     String?
   createdAt DateTime  @default(now())
-  likes     Int       @default(0) // We will use a simple counter for now
+  likes     Int       @default(0)
   
   authorId  Int
   author    User      @relation(fields: [authorId], references: [id])
@@ -81,6 +87,7 @@ model Job {
   benefits    String[]
   remote      Boolean  @default(false)
   urgent      Boolean  @default(false)
+  approved    Boolean  @default(false)
   createdAt   DateTime @default(now())
   applicants  Int      @default(0)
 
@@ -102,6 +109,22 @@ model Connection {
   @@unique([requesterId, recipientId])
 }
 
+model Mentorship {
+  id          Int      @id @default(autoincrement())
+  status      String   @default("pending") // "pending", "accepted", "rejected"
+  message     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  studentId   Int
+  student     User     @relation("Mentee", fields: [studentId], references: [id])
+
+  alumniId    Int
+  alumni      User     @relation("Mentor", fields: [alumniId], references: [id])
+
+  @@unique([studentId, alumniId])
+}
+
 model Notification {
   id          Int      @id @default(autoincrement())
   title       String
@@ -116,8 +139,12 @@ model Notification {
 model Event {
   id          Int      @id @default(autoincrement())
   title       String
+  description String?
   date        DateTime
   location    String?
   color       String   @default("bg-blue-500")
   createdAt   DateTime @default(now())
+
+  createdById Int?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
 }

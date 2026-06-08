@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Menu, X, Users, UserCheck, LogOut, User } from "lucide-react";
+import { Menu, X, Users, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AuthModal, useAuthModals } from "@/components/modals/AuthModals";
-import { RoleSelectionModal } from "@/components/modals/RoleSelectionModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface NavigationProps {
   activeSection: string;
@@ -22,15 +22,25 @@ const navItems = [
 
 export const Navigation = ({ activeSection }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const { signUpOpen, signInOpen, openSignUp, openSignIn, closeAll } = useAuthModals();
   const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
       setIsOpen(false);
+    }
+  };
+
+  const goToDashboard = () => {
+    const role = user?.role || '';
+    switch (role) {
+      case 'admin': navigate('/admin-dashboard'); break;
+      case 'alumni': navigate('/alumni-dashboard'); break;
+      case 'student': navigate('/student-dashboard'); break;
+      default: navigate('/dashboard');
     }
   };
 
@@ -72,6 +82,15 @@ export const Navigation = ({ activeSection }: NavigationProps) => {
                   {user?.role}
                 </Badge>
               </div>
+              <Button
+                variant="default"
+                size="sm"
+                className="gradient-primary text-white border-0"
+                onClick={goToDashboard}
+              >
+                <LayoutDashboard className="w-4 h-4 mr-2" />
+                Dashboard
+              </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -89,14 +108,6 @@ export const Navigation = ({ activeSection }: NavigationProps) => {
               </Button>
               <Button className="gradient-primary text-white border-0 hover-glow" onClick={openSignUp}>
                 Sign Up
-              </Button>
-              <Button 
-                variant="outline" 
-                className="border-primary text-primary hover:bg-primary/10" 
-                onClick={() => setIsRoleModalOpen(true)}
-              >
-                <UserCheck className="w-4 h-4 mr-2" />
-                Select Role
               </Button>
             </>
           )}
@@ -139,6 +150,14 @@ export const Navigation = ({ activeSection }: NavigationProps) => {
                     </div>
                     <Badge variant="secondary" className="capitalize">{user?.role}</Badge>
                   </div>
+                  <Button
+                    variant="default"
+                    className="gradient-primary text-white border-0 w-full"
+                    onClick={goToDashboard}
+                  >
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Go to Dashboard
+                  </Button>
                   <Button variant="ghost" className="text-muted-foreground hover:text-primary w-full" onClick={logout}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Logout
@@ -152,14 +171,6 @@ export const Navigation = ({ activeSection }: NavigationProps) => {
                   <Button className="gradient-primary text-white border-0 w-full" onClick={openSignUp}>
                     Sign Up
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    className="border-primary text-primary hover:bg-primary/10 w-full" 
-                    onClick={() => setIsRoleModalOpen(true)}
-                  >
-                    <UserCheck className="w-4 h-4 mr-2" />
-                    Select Role
-                  </Button>
                 </>
               )}
             </div>
@@ -170,7 +181,6 @@ export const Navigation = ({ activeSection }: NavigationProps) => {
       {/* Auth Modals */}
       <AuthModal isOpen={signUpOpen} onClose={closeAll} type="signup" />
       <AuthModal isOpen={signInOpen} onClose={closeAll} type="signin" />
-      <RoleSelectionModal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} />
     </nav>
   );
 };

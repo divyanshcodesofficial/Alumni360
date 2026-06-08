@@ -9,7 +9,6 @@ import {
   User, 
   GraduationCap, 
   Users, 
-  Building, 
   Shield,
   Mail,
   Lock,
@@ -18,14 +17,11 @@ import {
   Loader2,
   Phone
 } from "lucide-react";
-import OTPInput from "@/components/OTPInput";
 
 const roles = [
-  { id: "faculty", label: "Faculty", icon: GraduationCap, description: "Teaching staff & educators" },
-  { id: "student", label: "Student", icon: User, description: "Current students" },
-  { id: "alumni", label: "Alumni", icon: Users, description: "Graduated students" },
-  { id: "institution", label: "College / Institution", icon: Building, description: "Educational institutions" },
-  { id: "admin", label: "Admin", icon: Shield, description: "System administrators" }
+  { id: "student", label: "Student", icon: User, description: "Current students seeking mentorship & opportunities" },
+  { id: "alumni", label: "Alumni", icon: GraduationCap, description: "Graduated students ready to mentor & contribute" },
+  { id: "admin", label: "Admin", icon: Shield, description: "Platform administrators & moderators" }
 ];
 
 interface AuthModalProps {
@@ -49,7 +45,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
     confirmPassword: "",
     name: "",
     phone: "",
-    institution: "",
     batch_year: "",
     adminSecret: ""
   });
@@ -75,7 +70,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
       confirmPassword: "",
       name: "",
       phone: "",
-      institution: "",
       batch_year: "",
       adminSecret: "",
     });
@@ -116,7 +110,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
           name: formData.name,
           phone: formData.phone,
           role: selectedRole,
-          ...(formData.institution && { institution: formData.institution }),
           ...(formData.batch_year && { batch_year: parseInt(formData.batch_year) }),
           ...(selectedRole === 'admin' && formData.adminSecret && { adminSecret: formData.adminSecret })
         };
@@ -145,7 +138,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
       }
     } catch (error) {
       console.error(`${type} error:`, error);
-      // Error is already handled in the auth context
     } finally {
       setSubmitLoading(false);
     }
@@ -163,7 +155,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
           otp,
           name: formData.name,
           role: selectedRole,
-          ...(formData.institution && { institution: formData.institution }),
           ...(formData.batch_year && { batch_year: parseInt(formData.batch_year) }),
           ...(selectedRole === 'admin' && formData.adminSecret && { adminSecret: formData.adminSecret })
         };
@@ -190,7 +181,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
       }
     } catch (error) {
       console.error(`OTP verification error:`, error);
-      // Error is already handled in the auth context
     } finally {
       setSubmitLoading(false);
     }
@@ -208,7 +198,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
           name: formData.name,
           phone: formData.phone,
           role: selectedRole,
-          ...(formData.institution && { institution: formData.institution }),
           ...(formData.batch_year && { batch_year: parseInt(formData.batch_year) }),
           ...(selectedRole === 'admin' && formData.adminSecret && { adminSecret: formData.adminSecret })
         };
@@ -240,7 +229,7 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="relative">
           <DialogTitle className="text-2xl font-bold text-center text-foreground">
             {step === 'role' ? (
@@ -270,23 +259,25 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
               }
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {roles.map((role) => (
                 <Card
                   key={role.id}
                   className="cursor-pointer border-2 hover:border-primary transition-all duration-200 hover-lift group"
                   onClick={() => handleRoleSelect(role.id)}
                 >
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-bounce">
-                      <role.icon className="w-6 h-6 text-white" />
+                  <CardContent className="p-6 flex items-center gap-4">
+                    <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-bounce">
+                      <role.icon className="w-7 h-7 text-white" />
                     </div>
-                    <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-smooth">
-                      {role.label}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {role.description}
-                    </p>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-smooth">
+                        {role.label}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {role.description}
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -314,10 +305,10 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
 
             {/* Development OTP Display */}
             {otpData.developmentOTP && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-                <p className="text-sm text-yellow-800 font-medium">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-center">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium">
                   Development Mode: Your OTP is{' '}
-                  <span className="font-mono font-bold text-yellow-900">{otpData.developmentOTP}</span>
+                  <span className="font-mono font-bold text-yellow-900 dark:text-yellow-100">{otpData.developmentOTP}</span>
                 </p>
               </div>
             )}
@@ -328,10 +319,10 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                 <input
                   type="text"
                   maxLength={6}
-                  className="w-full max-w-xs text-center text-2xl font-bold border-2 border-border rounded-lg px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full max-w-xs text-center text-2xl font-bold border-2 border-border rounded-lg px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background"
                   placeholder="Enter 6-digit code"
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, ''); // Only digits
+                    const value = e.target.value.replace(/\D/g, '');
                     e.target.value = value;
                     if (value.length === 6) {
                       handleOTPSubmit(value);
@@ -418,7 +409,7 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="bg-white border-border"
+                    className="border-border"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -435,7 +426,7 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       required
-                      className="bg-white border-border pl-10"
+                      className="border-border pl-10"
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
@@ -444,22 +435,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                   </p>
                 </div>
 
-                {(selectedRole === 'faculty' || selectedRole === 'student' || selectedRole === 'admin') && (
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                      Institution *
-                    </label>
-                    <Input
-                      name="institution"
-                      value={formData.institution}
-                      onChange={handleInputChange}
-                      required
-                      className="bg-white border-border"
-                      placeholder="Your institution name"
-                    />
-                  </div>
-                )}
-                
                 {(selectedRole === 'alumni' || selectedRole === 'student') && (
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">
@@ -471,10 +446,27 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                       value={formData.batch_year}
                       onChange={handleInputChange}
                       required={selectedRole === 'alumni'}
-                      className="bg-white border-border"
+                      className="border-border"
                       placeholder="e.g., 2020"
                       min="1900"
                       max={new Date().getFullYear() + 10}
+                    />
+                  </div>
+                )}
+
+                {selectedRole === 'admin' && (
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Admin Secret Key *
+                    </label>
+                    <Input
+                      name="adminSecret"
+                      type="password"
+                      value={formData.adminSecret}
+                      onChange={handleInputChange}
+                      required
+                      className="border-border"
+                      placeholder="Enter admin secret key"
                     />
                   </div>
                 )}
@@ -493,7 +485,7 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="bg-white border-border pl-10"
+                  className="border-border pl-10"
                   placeholder="Enter your email"
                 />
               </div>
@@ -511,7 +503,7 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  className="bg-white border-border pl-10"
+                  className="border-border pl-10"
                   placeholder="Enter your password"
                 />
               </div>
@@ -530,7 +522,7 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
-                    className="bg-white border-border pl-10"
+                    className="border-border pl-10"
                     placeholder="Confirm your password"
                   />
                 </div>
@@ -581,8 +573,6 @@ export const AuthModal = ({ isOpen, onClose, type }: AuthModalProps) => {
                   type="button"
                   className="text-primary hover:text-primary-dark font-medium ml-1 transition-smooth"
                   onClick={() => {
-                    // This would switch between sign up and sign in modes
-                    // For now, just close and let parent handle
                     handleClose();
                   }}
                 >

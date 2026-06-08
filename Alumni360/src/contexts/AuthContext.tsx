@@ -8,8 +8,7 @@ interface User {
   email: string;
   name: string;
   phone: string;
-  role: string;
-  institution?: string;
+  role: 'student' | 'alumni' | 'admin';
   batch_year?: number;
 }
 
@@ -27,10 +26,6 @@ interface AuthContextType {
   signinVerifyOTP: (otpData: LoginOTPData) => Promise<void>;
   signinAdminSendOTP: (credentials: SigninData) => Promise<OTPResponse>;
   signinAdminVerifyOTP: (otpData: LoginOTPData) => Promise<void>;
-  // Legacy methods (kept for backward compatibility)
-  signup: (userData: SignupData) => Promise<void>;
-  signin: (credentials: SigninData) => Promise<void>;
-  signinAdmin: (credentials: SigninData) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -162,35 +157,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Legacy methods for backward compatibility
-  const signup = async (userData: SignupData) => {
-    // Legacy method, should use OTP flow instead
-    toast.error('Direct signup is disabled. Please use OTP verification.');
-  };
-
-  const signin = async (credentials: SigninData) => {
-    // Legacy method, should use OTP flow instead
-    toast.error('Direct signin is disabled. Please use OTP verification.');
-  };
-
-  const signinAdmin = async (credentials: SigninData) => {
-    // This should now use the 2FA flow
-    const otpResponse = await signinAdminSendOTP(credentials);
-    throw new Error('Please use the new 2FA admin signin flow');
-  };
-
   const getDashboardPath = (role: string): string => {
     switch (role) {
       case 'admin':
         return '/admin-dashboard';
-      case 'faculty':
-        return '/faculty-dashboard';
       case 'student':
         return '/student-dashboard';
       case 'alumni':
         return '/alumni-dashboard';
-      case 'institution':
-        return '/institution-dashboard';
       default:
         return '/dashboard';
     }
@@ -203,17 +177,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     isAuthenticated: !!token,
     isLoading,
-    // 2FA methods
     signupSendOTP,
     signupVerifyOTP,
     signinSendOTP,
     signinVerifyOTP,
     signinAdminSendOTP,
     signinAdminVerifyOTP,
-    // Legacy methods
-    signup,
-    signin,
-    signinAdmin,
   };
 
   return (
