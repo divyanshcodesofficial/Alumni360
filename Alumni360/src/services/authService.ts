@@ -1,5 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL;
-const MOCK_MODE = import.meta.env.VITE_MOCK_MODE === 'true';
+export const API_URL = import.meta.env.VITE_API_URL;
+export const MOCK_MODE = import.meta.env.VITE_MOCK_MODE === 'true';
 
 // Mock delay for realistic feel
 const mockDelay = () => new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500));

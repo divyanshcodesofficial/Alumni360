@@ -50,10 +50,10 @@ const AdminDashboard = () => {
       const headers = { Authorization: `Bearer ${token}` };
       const [analyticsData, usersRes, eventsRes, jobsRes, mentorshipsRes] = await Promise.all([
         authService.fetchAdminAnalytics(),
-        fetch('http://localhost:5000/api/admin/users', { headers }),
-        fetch('http://localhost:5000/api/admin/events', { headers }),
-        fetch('http://localhost:5000/api/admin/jobs', { headers }),
-        fetch('http://localhost:5000/api/admin/mentorships', { headers }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/users`, { headers }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/events`, { headers }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/jobs`, { headers }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/mentorships`, { headers }),
       ]);
 
       setAnalytics(analyticsData);
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (userId: number) => {
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/users/${userId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
 
   const handleUpdateRole = async (userId: number, newRole: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/role`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/users/${userId}/role`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ role: newRole })
@@ -112,7 +112,7 @@ const AdminDashboard = () => {
 
   const handleApproveJob = async (jobId: number, approved: boolean) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/jobs/${jobId}/approve`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/jobs/${jobId}/approve`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ approved })
@@ -129,7 +129,7 @@ const AdminDashboard = () => {
 
   const handleDeleteJob = async (jobId: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/jobs/${jobId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/jobs/${jobId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
 
   const handleDeleteEvent = async (eventId: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/events/${eventId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/events/${eventId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

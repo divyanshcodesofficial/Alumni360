@@ -47,7 +47,7 @@ const DashboardLayout = ({ children, navItems, activeTab, onTabChange, roleColor
     if (!token) return;
     const loadNotifications = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/notifications', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/notifications`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -61,7 +61,7 @@ const DashboardLayout = ({ children, navItems, activeTab, onTabChange, roleColor
 
   const handleMarkAllRead = async () => {
     try {
-      await fetch('http://localhost:5000/api/notifications/read-all', {
+      await fetch(`${import.meta.env.VITE_API_URL}/notifications/read-all`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });

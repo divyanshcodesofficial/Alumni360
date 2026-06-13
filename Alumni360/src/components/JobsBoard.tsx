@@ -49,7 +49,7 @@ const JobsBoard: React.FC = () => {
 
   const fetchJobs = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/jobs', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -67,7 +67,7 @@ const JobsBoard: React.FC = () => {
     if (!newJob.title || !newJob.company || !newJob.description) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/jobs', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

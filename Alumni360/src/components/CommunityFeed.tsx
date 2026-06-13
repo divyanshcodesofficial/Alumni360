@@ -39,7 +39,7 @@ const CommunityFeed: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/posts', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -56,7 +56,7 @@ const CommunityFeed: React.FC = () => {
   const handleCreatePost = async () => {
     if (!newPost.trim()) return;
     try {
-      const res = await fetch('http://localhost:5000/api/posts', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const CommunityFeed: React.FC = () => {
 
   const handleLike = async (postId: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}/like`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/posts/${postId}/like`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -99,7 +99,7 @@ const CommunityFeed: React.FC = () => {
     if (!commentText?.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/posts/${postId}/comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

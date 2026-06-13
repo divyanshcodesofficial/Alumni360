@@ -38,7 +38,7 @@ const AlumniDirectory: React.FC = () => {
 
   const fetchAlumni = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users/directory', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/directory`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -54,7 +54,7 @@ const AlumniDirectory: React.FC = () => {
 
   const handleConnect = async (memberId: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/connect/${memberId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/connect/${memberId}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });

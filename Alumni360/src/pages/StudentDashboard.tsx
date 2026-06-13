@@ -47,9 +47,9 @@ const StudentDashboard = () => {
     setLoading(true);
     try {
       const [statsRes, mentorRes, eventsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/users/stats', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/users/mentorship/requests', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/users/events', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/users/stats`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/users/mentorship/requests`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/users/events`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const [statsData, mentorData, eventsData] = await Promise.all([
         statsRes.json(), mentorRes.json(), eventsRes.json()
@@ -414,7 +414,7 @@ const SettingsTab = () => {
     setSaving(true);
     try {
       const skillsArray = profile.skills.split(',').map((s: string) => s.trim()).filter(Boolean);
-      const res = await fetch('http://localhost:5000/api/users/profile', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ...profile, skills: skillsArray })
