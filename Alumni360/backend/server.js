@@ -56,7 +56,7 @@ const startServer = async () => {
     // Test database connection
     await prisma.$connect();
     console.log('PostgreSQL Connected via Prisma');
-    
+
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
